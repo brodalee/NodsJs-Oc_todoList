@@ -1,2 +1,1 @@
-npm install --save express
-npm install --save socket.io
+Todo List using socket.io for every people that are on the same network (localy)
