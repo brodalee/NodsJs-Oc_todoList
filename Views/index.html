@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1 class="text-center">Ma Super Todo List</h1>
+        <br>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5"></div>
+                <div class="col-md-4">
+                    <ul id="todolist">
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    Que dois-je faire ?
+                    <input type="text" id="todo" class="form-control"><br>
+                    <button id="validate" class="btn btn-primary form-control">Valider</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io.connect('http://localhost:8086');
+            socket.emit('start');
+            socket.on('getdata', (data) => {
+                $('#todolist').empty();
+                console.log(data.listTodo);
+                for (let i in data.listTodo) {
+                    $('#todolist').append('<li><i class="glyphicon glyphicon-remove" id="' + data.listTodo[i].id + '"></i>' + data.listTodo[i].todo + '</li>');
+                    document.getElementById(data.listTodo[i].id).addEventListener('click', (e) => {
+                        socket.emit('supptodo', {
+                            id: e.target.id
+                        });
+                    });
+                }
+            });
+            document.getElementById('validate').addEventListener('click', (e) => {
+                e.preventDefault();
+                socket.emit('emitnewtodo', {
+                    todo: document.getElementById('todo').value
+                });
+            });
+        </script>
+    </body>
+</html>
